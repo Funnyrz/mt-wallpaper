@@ -4,25 +4,26 @@ const unsplash = createApi({
 });
 // non-feed example
 export default {
-  getPhotos(page, perPage, orderBy) {
-    console.log(page, perPage, orderBy);
-    // feed example
-    unsplash.collections
-      .getPhotos({ collectionId: "16122867" })
-      .then((result) => {
-        if (result.errors) {
-          // handle error here
-          console.log("error occurred: ", result.errors[0]);
-        } else {
-          const feed = result.response;
-
-          // extract total and results array from response
-          const { total, results } = feed;
-
-          // handle success here
-          console.log(`received ${results.length} photos out of ${total}`);
-          console.log("first photo: ", results[0]);
-        }
-      });
+  /**
+   *  获取集合图片
+   * @param {*} page
+   * @param {*} perPage
+   * @param {*} orderBy
+   * @returns
+   */
+  async getCollections(page, perPage, orderBy) {
+    const resp = await unsplash.collections.getPhotos({
+      collectionId: "16122867",
+      page: page,
+      perPage: perPage,
+      orderBy: orderBy,
+    });
+    return resp.response;
+  },
+  async trackDownload(download_location) {
+    let resp = await unsplash.photos.trackDownload({
+      downloadLocation: download_location,
+    });
+    return resp.response;
   },
 };
