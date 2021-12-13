@@ -1,27 +1,32 @@
-.img-list {
+.img {
+  width: 210px;
+  height: 140px;
+  background-color: #fff;
+  /* padding: 1rem 1rem 0rem 1rem; */
+  /* box-shadow: 10px 10px 5px #000; */
+  
+  /* border: #626aef solid 1px; */
 }
-.box {
-  padding: 1.3em;
-  margin-top: 1em;
-  -webkit-column-break-inside: avoid;
-  break-inside: avoid;
-  /* 	border:1px solid #000; */
-  background: #fff;
+.img-item:hover {
   box-shadow: 10px 10px 5px #000;
+}
+.img-item {
   transition: 0.5s ease;
-}
-.box:hover {
-  transform: scale(1.1);
-}
-.box-wrapper {
-  margin: 0 1rem;
-  -moz-column-count: 4;
-  /* Firefox */
-  -webkit-column-count: 4;
-  /* Safari 和 Chrome */
-  column-count: 4;
-  -moz-column-gap: 1em;
-  -webkit-column-gap: 1em;
-  column-gap: 1em;
+  background-color: #fff;
+  padding: 2rem 1rem;
+  margin-top: 1rem;
 }
 
+.img-desc {
+  background: #3e3f4199;
+  width: 210px;
+  height: 1.7rem;
+  color: #fff;
+}
+
+.font14{
+  font-size: 14px;
+}
+.el-image{
+  display: block !important;
+}
