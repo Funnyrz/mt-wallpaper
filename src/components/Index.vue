@@ -1,54 +1,60 @@
 <template>
-  <el-container>
-    <el-aside width="200px" style="border-right: #fff solid 1px"
-      >对方对方的</el-aside
-    >
-    <el-container>
-      <el-main>
-        <el-row style="margin-left: 1.6rem">
-          <el-col :span="8">
-            <el-button-group>
-              <el-button color="#626aef" style="color: white" size="mini"
-                >最新</el-button
-              >
-              <el-button color="#626aef" style="color: white" size="mini"
-                >最热</el-button
-              >
-              <el-button color="#626aef" style="color: white" size="mini"
-                >最酷炫</el-button
-              >
-            </el-button-group>
-          </el-col>
-        </el-row>
+  <el-main>
+    <el-row>
+      <el-col :span="8">
+        <el-button-group>
+          <el-button color="#626aef" style="color: white" size="mini"
+            >最新</el-button
+          >
+          <el-button color="#626aef" style="color: white" size="mini"
+            >最热</el-button
+          >
+          <el-button color="#626aef" style="color: white" size="mini"
+            >最酷炫</el-button
+          >
+        </el-button-group>
+      </el-col>
+    </el-row>
 
-        <el-row justify="space-between" :gutter="22">
-          <el-col :span="7" v-for="(obj, i) in imgList" :key="i">
-            <div class="img-item" align="center">
-              <el-image
-                :src="obj.urls.thumb"
-                class="img"
-                @click="previewImg(obj)"
-                :preview-src-list="previewImgList"
-              />
-              <div class="img-desc">
-                <el-row justify="space-between">
-                  <el-col :span="3">
-                    <el-icon :size="20"><star /></el-icon>
-                  </el-col>
-                  <el-col :span="14">
-                    <span class="font14">1920x1080</span>
-                  </el-col>
-                  <el-col :span="5">
-                    <span class="font14">下载</span>
-                  </el-col>
-                </el-row>
-              </div>
-            </div>
-          </el-col>
-        </el-row>
-      </el-main>
-    </el-container>
-  </el-container>
+    <el-row justify="space-between">
+      <el-col :span="7" v-for="(obj, i) in imgList" :key="i">
+        <div class="img-item" align="center">
+          <el-image
+            :src="obj.urls.thumb"
+            class="img"
+            @click="previewImg(obj)"
+            :preview-src-list="previewImgList"
+          />
+          <div class="img-desc">
+            <el-row justify="space-between">
+              <el-col :span="3" class="hand_mouse">
+                <el-icon
+                  :size="20"
+                  v-if="collection.indexOf(obj.id)"
+                  color="#fccf07"
+                  ><star
+                /></el-icon>
+                <el-icon :size="20" color="#fccf07" v-else
+                  ><star-filled
+                /></el-icon>
+              </el-col>
+              <el-col :span="15">
+                <span class="font14">{{ obj.width }}x{{ obj.height }}</span>
+              </el-col>
+              <el-col :span="3" class="hand_mouse down-btn">
+                <el-icon title="下载" @click="downloadPic(obj)"
+                  ><download
+                /></el-icon>
+              </el-col>
+              <!-- <el-col :span="3" class="hand_mouse">
+                <el-icon title="下载并应用"><setting /></el-icon
+              ></el-col> -->
+            </el-row>
+          </div>
+        </div>
+      </el-col>
+    </el-row>
+  </el-main>
   <!-- <el-dialog v-model="dialogTableVisible" title="图片详情" width="55%">
     <div class="large" v-if="largeImg">
       <el-image :src="largeImg" />
@@ -63,9 +69,15 @@
 
 <script>
 import unsplash from "../utils/unsplash";
-import { Star } from "@element-plus/icons";
+import downloadFile from "../utils/download";
+const storage = require("electron-json-storage");
+const os = require("os");
+storage.setDataPath(os.tmpdir());
+import { ElMessage } from "element-plus";
+
+import { Star, StarFilled, Download } from "@element-plus/icons";
 export default {
-  components: { Star },
+  components: { Star, StarFilled, Download },
   name: "Index",
   props: {
     msg: String,
@@ -75,6 +87,7 @@ export default {
       imgList: [],
       largeImg: "",
       dialogTableVisible: false,
+      collection: ["01_igFr7hd4"],
       currObj: {},
       previewImgList: [],
     };
@@ -86,13 +99,44 @@ export default {
     async getCollections() {
       let { results } = await unsplash.getCollections(1, 30, "");
       this.imgList = results;
-      console.log(this.imgList);
     },
     previewImg(obj) {
       // this.dialogTableVisible = true;
       // this.currObj = obj;
       this.previewImgList[0] = obj.urls.regular;
       // this.largeImg = obj.urls.regular;
+    },
+    downloadPic(object) {
+      let id = object.id;
+      let downing = {
+        id: object.id,
+        width: object.width,
+        height: object.height,
+        thumb: object.urls.thumb,
+        downUrl: object.links.download_location,
+        progress: 0,
+      };
+      let download = storage.getSync("download");
+      if (Object.prototype.hasOwnProperty.call(download, id)) {
+        ElMessage.warning({
+          message: "该壁纸已在下载队列",
+          type: "warning",
+        });
+      } else {
+        download[id] = downing;
+        this.$notify.success({
+          title: "添加成功",
+          message: "已添加到下载队列",
+        });
+      }
+      storage.set("download", download, function (error) {
+        if (error) throw error;
+      });
+      downloadFile(object.urls.thumb);
+      // this.$router.push({ path: "/download" });
+    },
+    download(object) {
+      this.$router.push({ path: "/download", query: { obj: object } });
     },
     async setWallpaperBtn() {
       const resp = await unsplash.trackDownload(

@@ -1,11 +1,17 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Index from "@/components/Index.vue";
+import Download from "@/components/Download.vue";
 
 const routes = [
   {
-    path: "/",
+    path: "/index",
     name: "Index",
     component: Index,
+  },
+  {
+    path: "/download",
+    name: "Download",
+    component: Download,
   },
 ];
 
