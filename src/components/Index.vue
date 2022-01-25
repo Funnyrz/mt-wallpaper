@@ -139,8 +139,8 @@ export default {
       const rootPath = require("path").resolve(__dirname, this.getResPath());
       // 用于获取进度通知的函数，可以省略
       const progress = (size, total) => console.log(`进度：${size}/${total}`);
-
-      leiDownload(source, rootPath, progress, (err, filename) => {
+      let savePath = rootPath + "/" + id + ".jpg";
+      leiDownload(source, savePath, progress, (err, filename) => {
         if (err) console.log(`出错：${err}`);
         else console.log(`已保存到：${filename}`);
       });

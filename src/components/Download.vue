@@ -10,7 +10,7 @@
         <div class="mt-10">{{ downObj.height }} x {{ downObj.width }}</div>
       </el-col>
       <el-col :span="1"
-        ><el-icon><close-bold /></el-icon>
+        ><el-icon><close-bold @click="removeDownFile(downObj.id)" /></el-icon>
       </el-col>
       <el-divider></el-divider>
     </el-row>
@@ -32,6 +32,15 @@ export default {
     const storage = require("electron-json-storage");
     let download = storage.getSync("download");
     this.downlaodQueue = download;
+  },
+  methods: {
+    removeDownFile(id) {
+      const storage = require("electron-json-storage");
+      delete this.downlaodQueue[id];
+      storage.set("download", this.downlaodQueue, function (error) {
+        if (error) throw error;
+      });
+    },
   },
 };
 </script>
