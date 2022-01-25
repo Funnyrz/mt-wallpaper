@@ -69,7 +69,6 @@
 
 <script>
 import unsplash from "../utils/unsplash";
-import downloadFile from "../utils/download";
 const storage = require("electron-json-storage");
 const os = require("os");
 storage.setDataPath(os.tmpdir());
@@ -106,7 +105,7 @@ export default {
       this.previewImgList[0] = obj.urls.regular;
       // this.largeImg = obj.urls.regular;
     },
-    downloadPic(object) {
+    async downloadPic(object) {
       let id = object.id;
       let downing = {
         id: object.id,
@@ -122,6 +121,7 @@ export default {
           message: "该壁纸已在下载队列",
           type: "warning",
         });
+        return;
       } else {
         download[id] = downing;
         this.$notify.success({
@@ -132,8 +132,26 @@ export default {
       storage.set("download", download, function (error) {
         if (error) throw error;
       });
-      downloadFile(object.urls.thumb);
+      const resp = await unsplash.trackDownload(downing.downUrl);
+      const leiDownload = require("lei-download");
+      const source = resp.url;
+      //渲染器进程代码
+      const rootPath = require("path").resolve(__dirname, this.getResPath());
+      // 用于获取进度通知的函数，可以省略
+      const progress = (size, total) => console.log(`进度：${size}/${total}`);
+
+      leiDownload(source, rootPath, progress, (err, filename) => {
+        if (err) console.log(`出错：${err}`);
+        else console.log(`已保存到：${filename}`);
+      });
       // this.$router.push({ path: "/download" });
+    },
+    getResPath() {
+      if (process.env.NODE_ENV == "development") {
+        return "../../../extraResources";
+      } else {
+        return process.resourcesPath + "/extraResources";
+      }
     },
     download(object) {
       this.$router.push({ path: "/download", query: { obj: object } });

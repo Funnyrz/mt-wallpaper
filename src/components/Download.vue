@@ -19,6 +19,7 @@
 
 <script>
 import { CloseBold } from "@element-plus/icons";
+
 export default {
   components: { CloseBold },
   // props: { obj: { type: Object } },
