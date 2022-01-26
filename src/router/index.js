@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Index from "@/components/Index.vue";
-import Download from "@/components/Download.vue";
 
 const routes = [
   {
@@ -9,9 +8,8 @@ const routes = [
     component: Index,
   },
   {
-    path: "/download",
-    name: "Download",
-    component: Download,
+    path: "/",
+    redirect: "/index",
   },
 ];
 

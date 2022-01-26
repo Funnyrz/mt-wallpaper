@@ -1,6 +1,12 @@
 <template>
   <el-main>
-    <el-row>
+    <div
+      style="position: fixed; right: 0; top: 0; width: 98%; z-index: 999"
+      v-if="isDowning"
+    >
+      <el-progress :percentage="percentage" color="#626aef" />
+    </div>
+    <el-row justify="space-between">
       <el-col :span="8">
         <el-button-group>
           <el-button color="#626aef" style="color: white" size="mini"
@@ -13,6 +19,15 @@
             >最酷炫</el-button
           >
         </el-button-group>
+      </el-col>
+      <el-col :span="6">
+        <el-input
+          v-model="searchKey"
+          class="w-50 m-2"
+          size="small"
+          placeholder="请输入关键字搜索"
+          @keyup.enter="searchWallpaper"
+        />
       </el-col>
     </el-row>
 
@@ -42,7 +57,7 @@
                 <span class="font14">{{ obj.width }}x{{ obj.height }}</span>
               </el-col>
               <el-col :span="3" class="hand_mouse down-btn">
-                <el-icon title="下载" @click="downloadPic(obj)"
+                <el-icon title="下载并设置" @click="downloadPic(obj)"
                   ><download
                 /></el-icon>
               </el-col>
@@ -72,8 +87,6 @@ import unsplash from "../utils/unsplash";
 const storage = require("electron-json-storage");
 const os = require("os");
 storage.setDataPath(os.tmpdir());
-import { ElMessage } from "element-plus";
-
 import { Star, StarFilled, Download } from "@element-plus/icons";
 export default {
   components: { Star, StarFilled, Download },
@@ -89,12 +102,16 @@ export default {
       collection: ["01_igFr7hd4"],
       currObj: {},
       previewImgList: [],
+      percentage: 0,
+      isDowning: false,
+      searchKey: "",
     };
   },
   mounted() {
     this.getCollections();
   },
   methods: {
+    async searchWallpaper() {},
     async getCollections() {
       let { results } = await unsplash.getCollections(1, 30, "");
       this.imgList = results;
@@ -113,36 +130,29 @@ export default {
         height: object.height,
         thumb: object.urls.thumb,
         downUrl: object.links.download_location,
-        progress: 0,
+        size: 0,
+        totalSize: 0,
       };
-      let download = storage.getSync("download");
-      if (Object.prototype.hasOwnProperty.call(download, id)) {
-        ElMessage.warning({
-          message: "该壁纸已在下载队列",
-          type: "warning",
-        });
-        return;
-      } else {
-        download[id] = downing;
-        this.$notify.success({
-          title: "添加成功",
-          message: "已添加到下载队列",
-        });
-      }
-      storage.set("download", download, function (error) {
-        if (error) throw error;
-      });
       const resp = await unsplash.trackDownload(downing.downUrl);
       const leiDownload = require("lei-download");
       const source = resp.url;
       //渲染器进程代码
       const rootPath = require("path").resolve(__dirname, this.getResPath());
       // 用于获取进度通知的函数，可以省略
-      const progress = (size, total) => console.log(`进度：${size}/${total}`);
+      const progress = (size, total) => {
+        this.percentage = parseInt((size / total) * 100);
+        console.log(`进度：${size}/${total}`);
+      };
       let savePath = rootPath + "/" + id + ".jpg";
+      this.isDowning = true;
       leiDownload(source, savePath, progress, (err, filename) => {
-        if (err) console.log(`出错：${err}`);
-        else console.log(`已保存到：${filename}`);
+        if (err) {
+          console.log(`出错：${err}`);
+        } else {
+          this.isDowning = false;
+          console.log(`已保存到：${filename}`);
+          this.setWallpaperBtn(filename);
+        }
       });
       // this.$router.push({ path: "/download" });
     },
@@ -156,24 +166,19 @@ export default {
     download(object) {
       this.$router.push({ path: "/download", query: { obj: object } });
     },
-    async setWallpaperBtn() {
-      const resp = await unsplash.trackDownload(
-        this.currObj.links.download_location
-      );
-
+    async setWallpaperBtn(path) {
       var { setWallPaperFunc } = require("../utils/setWallPaper");
-      var ret = setWallPaperFunc(
-        "D:\\wallpaper\\Mojave Day.jpg",
-        true,
-        function (err, val) {
-          if (err) {
-            throw err;
-          } else {
-            return val;
-          }
+      var ret = setWallPaperFunc(path, true, function (err, val) {
+        if (err) {
+          throw err;
+        } else {
+          this.$notify.success({
+            title: "设置成功",
+            message: "已成功设置为桌面壁纸!",
+          });
+          return val;
         }
-      );
-      console.log(resp);
+      });
       console.log(ret);
     },
 
