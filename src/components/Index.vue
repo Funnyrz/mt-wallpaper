@@ -31,7 +31,7 @@
       </el-col>
     </el-row>
 
-    <el-row justify="space-between">
+    <el-row justify="space-between" v-loading="loading">
       <el-col :span="7" v-for="(obj, i) in imgList" :key="i">
         <div class="img-item" align="center">
           <el-image
@@ -88,6 +88,8 @@ const storage = require("electron-json-storage");
 const os = require("os");
 storage.setDataPath(os.tmpdir());
 import { Star, StarFilled, Download } from "@element-plus/icons";
+import { ElMessage } from "element-plus";
+
 export default {
   components: { Star, StarFilled, Download },
   name: "Index",
@@ -104,6 +106,7 @@ export default {
       previewImgList: [],
       percentage: 0,
       isDowning: false,
+      loading: false,
       searchKey: "",
     };
   },
@@ -111,9 +114,16 @@ export default {
     this.getCollections();
   },
   methods: {
-    async searchWallpaper() {},
+    async searchWallpaper() {
+      this.loading = true;
+      let { results } = await unsplash.searchPhotos(this.searchKey, 1, 30, "");
+      this.loading = false;
+      this.imgList = results;
+    },
     async getCollections() {
+      this.loading = true;
       let { results } = await unsplash.getCollections(1, 30, "");
+      this.loading = false;
       this.imgList = results;
     },
     previewImg(obj) {
@@ -133,6 +143,12 @@ export default {
         size: 0,
         totalSize: 0,
       };
+      if (this.isDowning) {
+        ElMessage.error("当前已有下载任务,请稍后重试!");
+        return;
+      } else {
+        ElMessage("已经开始下载!");
+      }
       const resp = await unsplash.trackDownload(downing.downUrl);
       const leiDownload = require("lei-download");
       const source = resp.url;
