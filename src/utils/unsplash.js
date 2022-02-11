@@ -1,6 +1,7 @@
 import { createApi } from "unsplash-js";
+import { unsplashConfig } from "config";
 const unsplash = createApi({
-  accessKey: "",
+  accessKey: unsplashConfig.accessKey,
 });
 // non-feed example
 export default {
@@ -13,7 +14,7 @@ export default {
    */
   async getCollections(page, perPage, orderBy) {
     const resp = await unsplash.collections.getPhotos({
-      collectionId: "16122867",
+      collectionId: unsplashConfig.defaultCollId,
       page: page,
       perPage: perPage,
       orderBy: orderBy,
