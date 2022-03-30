@@ -1,5 +1,5 @@
 import { createApi } from "unsplash-js";
-import { unsplashConfig } from "config";
+import { unsplashConfig } from "./config";
 const unsplash = createApi({
   accessKey: unsplashConfig.accessKey,
 });

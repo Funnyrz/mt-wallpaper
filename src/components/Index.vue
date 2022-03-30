@@ -57,7 +57,7 @@
                 <span class="font14">{{ obj.width }}x{{ obj.height }}</span>
               </el-col>
               <el-col :span="3" class="hand_mouse down-btn">
-                <el-icon title="下载并设置" @click="downloadPic(obj)"
+                <el-icon title="下载并设置" @click="downAndSetWallpaper(obj)"
                   ><download
                 /></el-icon>
               </el-col>
@@ -132,7 +132,7 @@ export default {
       this.previewImgList[0] = obj.urls.regular;
       // this.largeImg = obj.urls.regular;
     },
-    async downloadPic(object) {
+    async downAndSetWallpaper(object) {
       let id = object.id;
       let downing = {
         id: object.id,

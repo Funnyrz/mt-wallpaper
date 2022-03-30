@@ -14,10 +14,13 @@
   "main": "background.js",
   "dependencies": {
     "@element-plus/icons-vue": "^0.2.4",
+    "config": "^3.3.7",
     "core-js": "^3.6.5",
     "electron-edge-js": "^14.16.1",
+    "electron-json-storage": "^4.5.0",
     "element-plus": "^1.2.0-beta.4",
     "lei-download": "^1.0.2",
+    "rebuild": "^0.1.2",
     "unsplash-js": "^7.0.15",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",
@@ -61,5 +64,6 @@
     "> 1%",
     "last 2 versions",
     "not dead"
-  ]
+  ],
+  "__npminstall_done": false
 }
