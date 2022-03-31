@@ -1,5 +1,9 @@
 # mt-wallpaper
 
+## 简介
+
+**学习使用Electron开发桌面程序**
+
 ## Project setup
 ```
 yarn install
