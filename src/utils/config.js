@@ -1,6 +1,7 @@
 module.exports = {
   unsplashConfig: {
-    accessKey: "xxx",
+    accessKey:
+      "xxxx",
     defaultCollId: "16122867",
   },
 };
