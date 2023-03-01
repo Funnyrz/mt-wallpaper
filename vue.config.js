@@ -1,8 +1,4 @@
-module.exports = {
-  pluginOptions: {
-    electronBuilder: {
-      nodeIntegration: true,
-      externals: ["electron-edge-js"],
-    },
-  },
-};
+const { defineConfig } = require('@vue/cli-service')
+module.exports = defineConfig({
+  transpileDependencies: true
+})

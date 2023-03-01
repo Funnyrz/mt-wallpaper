@@ -1,9 +1,5 @@
 # mt-wallpaper
 
-## 简介
-
-**学习使用Electron开发桌面程序**
-
 ## Project setup
 ```
 yarn install
@@ -26,4 +22,3 @@ yarn lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
-# mt-wallpaper

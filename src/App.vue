@@ -1,25 +1,27 @@
 <template>
-  <router-view />
+  <Index />
 </template>
+
 <script>
+import Index from "./components/Index.vue";
+
 export default {
-  data() {
-    return {};
-  },
-  mounted() {},
-  methods: {
-    toDownload() {
-      this.$router.push("/download");
-    },
-    toIndex() {
-      this.$router.push("/index");
-    },
-  },
+  name: "App",
+  components: {
+    Index
+  }
 };
 </script>
 
-<style lang="stylus">
-body{
-  background-color: #909090;
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+}
+
+body {
+  background-color: #262525
 }
 </style>
